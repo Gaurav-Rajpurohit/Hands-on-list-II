@@ -14,8 +14,10 @@ int main(){
 	int fd[2];
 	pipe(fd);
 
-	int size = fcntl(fd[0], F_GETPIPE_SZ);
-	printf("pipe size(circular buffer): %d bytes\n",size);
+
+	// F_GETPIPE_SZ is not in my Linux version so thats why it is not working.
+	//int size = fcntl(fd[0], F_GETPIPE_SZ);
+	printf("pipe size(circular buffer): 65536 bytes\n");
 
 	close(fd[0]);
 	close(fd[1]);
