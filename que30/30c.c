@@ -1,38 +1,36 @@
 /*
 ============================================================================
-Name : 30a.c
+Name : 30c.c
 Author : Gaurav Rajpurohit
-Description : 30. Write a program to create a shared memory.
-a. write some data to the shared memory
+Description : c. detach the shared memory
 Date: Sept 21st, 2025.
 ============================================================================
 */
 
 
 
-
-#include<sys/shm.h>
-#include<unistd.h>
 #include<stdio.h>
+#include<stdlib.h>
+#include<sys/ipc.h>
+#include<sys/shm.h>
 
-int main(void){
-	int key, shmid;
+
+int main(){
+	int key;  
+	key = ftok(".",'b');
 	char *data;
 
-	key = ftok(".",'b');
-	shmid = shmget(key,1024,IPC_CREAT|0744);
+	int shmid = shmget(key, 1024, 0666|IPC_CREAT);
 	data = shmat(shmid, 0, 0);
-	printf("Enter the text:");
-	scanf("%[^\n]",data);
-	printf("The shared memory id is %d\n", shmid);
-	
+	printf("Attached data :%s\n", data);
+	printf("shared Memory id :%d\n", shmid);
 	shmdt(data);
-	return 0;
-}
-/*OUTPUT
+	return 0;}
+
+	/*OUTPUT
 gaurav176@gaurav176-HP-Pavilion-Laptop-14-dv0xxx:~/Desktop/handsonlist2/que30$ ./a.out
-Enter the text:hello
-The shared memory id is 14
+Attached data :Hi Gaurav whats your name
+shared Memory id :14
 gaurav176@gaurav176-HP-Pavilion-Laptop-14-dv0xxx:~/Desktop/handsonlist2/que30$ ipcs -m
 
 ------ Shared Memory Segments --------

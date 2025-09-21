@@ -3,7 +3,7 @@
 Name : .c
 Author : Gaurav Rajpurohit
 Description : 
-Date: Sept th, 2025.
+Date: Sept st, 2025.
 ============================================================================
 */
 
