@@ -1,7 +1,7 @@
 
 /*
 ============================================================================
-Name : 10a.c
+Name : 10b.c
 Author : Gaurav Rajpurohit
 Description : 10. Write a separate program using sigaction system call to catch the following signals. 
  b. SIGINT 

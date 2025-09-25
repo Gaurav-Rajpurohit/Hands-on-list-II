@@ -1,3 +1,15 @@
+/*
+============================================================================
+Name : 10c.c
+Author : Gaurav Rajpurohit
+Description : 10. Write a separate program using sigaction system call to catch the following signals. 
+ c. SIGINT 
+Date: Sept 25th, 2025.
+============================================================================
+*/
+
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>
@@ -27,3 +39,8 @@ int main(){
 	return 0;
 }
 		
+/*OUTPUT
+gaurav176@gaurav176-HP-Pavilion-Laptop-14-dv0xxx:~/Desktop/handsonlist2/que10$ cc 10c.c
+gaurav176@gaurav176-HP-Pavilion-Laptop-14-dv0xxx:~/Desktop/handsonlist2/que10$ ./a.out
+CAUGHT SIGFPE :8... code == 1 
+*/
