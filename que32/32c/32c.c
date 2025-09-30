@@ -1,64 +1,58 @@
+/*
+============================================================================
+Name : 32c.c
+Author : Gaurav Rajpurohit
+Description : 32. Write a program to implement semaphore to protect any critical section. 
+ c. protect multiple pseudo resources ( may be two) using counting semaphore  
+Date: Sept 30th, 2025.
+============================================================================
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/ipc.h>
-#include <sys/sem.h>
-#include <errno.h>
+#include <fcntl.h>
+#include <semaphore.h>
+#include <sys/stat.h>
 
-#define SEM_KEY 1000
+#define SEM_NAME "/write_sem"
 
-// union required by semctl
-union semun {
-    int val;
-    struct semid_ds *buf;
-    unsigned short *array;
-};
+int main()
+{
+    sem_t *sem;
 
-int main() {
-    int semid;
+    
+    sem = sem_open(SEM_NAME, O_CREAT, 0644, 2);
 
-    // Create semaphore set with 1 semaphore
-    semid = semget(SEM_KEY, 1, 0666 | IPC_CREAT);
-    if (semid == -1) {
-        perror("semget");
-        exit(1);
-    }
+    printf("Process %d: waiting for a writing...\n", getpid());
+    sem_wait(sem);
 
-    // Check current value of semaphore
-    int current_val = semctl(semid, 0, GETVAL);
-    if (current_val == -1) {
-        perror("semctl GETVAL");
-        exit(1);
-    }
-
-    // Only initialize if it is the first time (value = 0 means uninitialized)
-    if (current_val == 0) {
-        union semun u;
-        u.val = 2;  // allow 2 processes at a time
-        if (semctl(semid, 0, SETVAL, u) == -1) {
-            perror("semctl SETVAL");
-            exit(1);
-        }
-        printf("Semaphore initialized with value 2\n");
-    }
-
-    struct sembuf p = {0, -1, 0}; // wait (P operation)
-    struct sembuf v = {0, 1, 0};  // signal (V operation)
-
-    printf("Process %d is trying to acquire a resource...\n", getpid());
-    if (semop(semid, &p, 1) == -1) {
-        perror("semop P");
-        exit(1);
-    }
-
-    printf("Process %d has acquired the resource!\n", getpid());
+    printf("Process %d: got a writer! writing...\n", getpid());
     sleep(10);
 
-    if (semop(semid, &v, 1) == -1) {
-        perror("semop V");
-        exit(1);
-    }
-    printf("Process %d released the resource.\n", getpid());
+    printf("Process %d: done writing, releasing writer.\n", getpid());
+    sem_post(sem);
 
+    sem_close(sem);
     return 0;
 }
+
+/*OUTPUT
+Terminal 1
+gaurav176@gaurav176-HP-Pavilion-Laptop-14-dv0xxx:~/Desktop/handsonlist2/que32/32c$ cc 32c.c -o program
+gaurav176@gaurav176-HP-Pavilion-Laptop-14-dv0xxx:~/Desktop/handsonlist2/que32/32c$ ./program
+Process 9972: waiting for a writing...
+Process 9972: got a writer! writing...
+Process 9972: done writing, releasing writer.
+
+Terminal 2
+gaurav176@gaurav176-HP-Pavilion-Laptop-14-dv0xxx:~/Desktop/handsonlist2/que32/32c$ ./program
+Process 9974: waiting for a writing...
+Process 9974: got a writer! writing...
+
+
+Terminal 3
+gaurav176@gaurav176-HP-Pavilion-Laptop-14-dv0xxx:~/Desktop/handsonlist2/que32/32c$ ./program
+Process 9973: waiting for a writing...
+Process 9973: got a writer! writing...
+
+*/
